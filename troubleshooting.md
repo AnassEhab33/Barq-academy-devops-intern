@@ -14,5 +14,25 @@ app-02    | 127.0.0.1 - - [08/Sep/2026 21:24:39] "GET /healthz HTTP/1.1" 404 - `
 - Retest evidence: When building the docker-compose file again it shows 200 ok in both app-01,02 ... `app-01    | {"timestamp": "2026-09-08T21:50:25.632+00:00", "level": "INFO", "service": "barq-api", "event": "http_request", "instance_id": "app-01", "request_id": "5d34ee4d1ac043ad8d970efec2926038", "method": "GET", "path": "/health", "status": 200, "duration_ms": 0.149}
 app-01    | 127.0.0.1 - - [08/Sep/2026 21:50:25] "GET /health HTTP/1.1" 200 -
 app-02    | {"timestamp": "2026-09-08T21:50:30.405+00:00", "level": "INFO", "service": "barq-api", "event": "http_request", "instance_id": "app-01", "request_id": "e5103f7524a54d40a0e825add45abf36", "method": "GET", "path": "/health", "status": 200, "duration_ms": 0.132}`
+- Related commit: 89d8a6bd29e5921a19ffbfe90a82b9c7bb65f8c6
+- Remaining uncertainty: No
+
+
+## Entry 02 / 2026-09-09 / 1:10 AM
+- Symptom: The app flags an error when trying curl on the localhost says Connection reset by peer
+- Hypothesis: when i searched on this error i understood that it successfully reached something on `localhost:8080`, but the other side forcibly closed/reset the connection
+- Command or test: `curl -v localhost:8080`
+- Actual output: 
+` connect to ::1 port 8080 from ::1 port 36906 failed: Connection refused 
+  Trying 127.0.0.1:8080...
+  Connected to localhost (127.0.0.1) port 8080
+  Recv failure: Connection reset by peer
+  Closing connection
+  curl: (56) Recv failure: Connection reset by peer
+`
+- Failed attempt and what changed your thinking: No failed attempts
+- Root cause: I found that when executing `docker ps` i found nginx ports was mapping when requesting the localhost:8080 to port 81 which no service running on this port so, thats why the connection was closed (`127.0.0.1:8080->81/tcp`)
+- Fix: 
+- Retest evidence:
 - Related commit:
 - Remaining uncertainty:
