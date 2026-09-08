@@ -9,3 +9,4 @@ COPY config/app.env /srv/app.env
 USER root
 EXPOSE 8080
 CMD ["python", "-m", "app.server"]
+
