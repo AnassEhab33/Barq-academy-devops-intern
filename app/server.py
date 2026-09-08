@@ -20,11 +20,11 @@ class Dependencies:
     def __init__(self, database_url, redis_url):
         self.database_url = database_url
         self.cache = redis.Redis.from_url(redis_url, socket_connect_timeout=2,
-                                          socket_timeout=2, decode_responses=True)
+                                        socket_timeout=2, decode_responses=True)
 
     def query(self, statement, params=()):
         with psycopg.connect(self.database_url, connect_timeout=2,
-                             options="-c statement_timeout=2000") as connection:
+                            options="-c statement_timeout=2000") as connection:
             with connection.cursor() as cursor:
                 cursor.execute(statement, params)
                 return cursor.fetchall()
@@ -49,7 +49,7 @@ class Dependencies:
 def create_app(config=None, dependencies=None):
     app = Flask(__name__)
     app.config.update(INSTANCE_ID=os.getenv("INSTANCE_ID", "local"),
-                      APP_MESSAGE=os.getenv("APP_MESSAGE", "Welcome to BARQ Systems"),
+                    APP_MESSAGE=os.getenv("APP_MESSAGE", "Welcome to BARQ Systems"),
                       MAX_CONTENT_LENGTH=16 * 1024)
     if config:
         app.config.update(config)
@@ -75,8 +75,8 @@ def create_app(config=None, dependencies=None):
         result.headers["X-Request-ID"] = g.request_id
         result.headers["Cache-Control"] = "no-store"
         log_event("INFO" if result.status_code < 400 else "WARN", "http_request",
-                  instance_id=instance, request_id=g.request_id, method=request.method,
-                  path=request.path, status=result.status_code,
+                instance_id=instance, request_id=g.request_id, method=request.method,
+                path=request.path, status=result.status_code,
                   duration_ms=round((time.perf_counter() - g.started) * 1000, 3))
         return result
 
@@ -86,7 +86,7 @@ def create_app(config=None, dependencies=None):
 
     def unavailable(name, exc):
         log_event("ERROR", "dependency_error", dependency=name, error_type=type(exc).__name__,
-                  request_id=g.request_id, instance_id=instance)
+                request_id=g.request_id, instance_id=instance)
         return response({"error": name + "_unavailable"}, 503)
 
     @app.get("/")
@@ -110,7 +110,7 @@ def create_app(config=None, dependencies=None):
             except Exception as exc:
                 checks[name] = "unavailable"
                 log_event("ERROR", "dependency_error", dependency=name, error_type=type(exc).__name__,
-                          request_id=g.request_id, instance_id=instance)
+                        request_id=g.request_id, instance_id=instance)
         healthy = all(value == "ready" for value in checks.values())
         return response({"status": "ready" if healthy else "not_ready", "dependencies": checks},
                         200 if healthy else 503)
@@ -140,6 +140,6 @@ def create_app(config=None, dependencies=None):
 
 if __name__ == "__main__":
     log_event("INFO", "configuration_loaded", database_url=os.getenv("DATABASE_URL", ""),
-              redis_url=os.getenv("REDIS_URL", ""))
+            redis_url=os.getenv("REDIS_URL", ""))
     create_app().run(host=os.getenv("APP_HOST", "0.0.0.0"),
-                     port=int(os.getenv("APP_PORT", "8080")), threaded=True, debug=False)
+                    port=int(os.getenv("APP_PORT", "8080")), threaded=True, debug=False)
