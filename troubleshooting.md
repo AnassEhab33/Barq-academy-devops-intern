@@ -32,7 +32,7 @@ app-02    | {"timestamp": "2026-09-08T21:50:30.405+00:00", "level": "INFO", "ser
 `
 - Failed attempt and what changed your thinking: No failed attempts
 - Root cause: I found that when executing `docker ps` i found nginx ports was mapping when requesting the localhost:8080 to port 81 which no service running on this port so, thats why the connection was closed (`127.0.0.1:8080->81/tcp`)
-- Fix: 
-- Retest evidence:
+- Fix: changed docker-compose.yml ports attribute from `127.0.0.1:${PUBLIC_PORT:-8080}:81` to `127.0.0.1:${PUBLIC_PORT:-8080}:80`
+- Retest evidence: 
 - Related commit:
 - Remaining uncertainty:
