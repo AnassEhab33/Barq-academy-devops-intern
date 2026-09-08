@@ -33,6 +33,38 @@ app-02    | {"timestamp": "2026-09-08T21:50:30.405+00:00", "level": "INFO", "ser
 - Failed attempt and what changed your thinking: No failed attempts
 - Root cause: I found that when executing `docker ps` i found nginx ports was mapping when requesting the localhost:8080 to port 81 which no service running on this port so, thats why the connection was closed (`127.0.0.1:8080->81/tcp`)
 - Fix: changed docker-compose.yml ports attribute from `127.0.0.1:${PUBLIC_PORT:-8080}:81` to `127.0.0.1:${PUBLIC_PORT:-8080}:80`
-- Retest evidence: 
+- Retest evidence: when i made curl localhost:8080 it showed me this output: `<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.3</center>
+</body>
+</html>`
+
+- Related commit: 10d0e4d46d991681cab52a0cf2bb99593547a726
+- Remaining uncertainty: No
+
+
+## Entry 03 / 2026-09-09 / 1:52 AM
+- Symptom: Received a 503 status code when connecting to localhost:8080
+- Hypothesis: I think it's a backend problem Maybe in the server itself. i will investigate in docker logs for nginx
+- Command or test: curl localhost:8080, docker logs nginx
+- Actual output: 
+
+**For curl localhost:8080** <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.3</center>
+</body>
+</html>
+
+**For docker logs ngnix:**
+`{"timestamp":"2026-09-08T22:39:49+00:00","service":"edge","request_id":"1cee02083fb37fb680c919f3b2881aaa","method":"GET","path":"/","status":502,"upstream":"172.20.0.2:8081","upstream_status":"502","request_time":"0.001"}`
+
+- **Failed attempt and what changed your thinking:** at the beginning i didn't notice but now, i found in nginx.conf that the upstream in app-01 was sending requests in port 8081
+- Root cause: found in nginx.conf that the upstream in app-01 was sending requests in port 8081 and not 8080
+- Fix: 
+- Retest evidence:
 - Related commit:
 - Remaining uncertainty:
