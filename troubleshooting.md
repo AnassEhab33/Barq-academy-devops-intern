@@ -95,10 +95,22 @@ APP_PORT=8080
 - Symptom: When requesting localhost:8080/ready it gives that postgres is unavailable
 - Hypothesis: Maybe there is something wrong in the Database URL in server.py or docker-compose.yml 
 - Command or test: `cat server.py` , `cat config/app.env` and `cat docker-compose.yml` ,`docker logs postgres` , `docker exec -it postgres sh` and `psql -U barq_app`
-- Actual output: found 3 main issues which are: `in server.py` DATABASE_URL value doens't exist. also, in `config/app.env` in the postgres URL the port 5433 instead of 5432 and password authentication failed in postgres logs
+- Actual output: found 4 main issues which are: `in server.py` DATABASE_URL value doens't exist. also, in `config/app.env` in the postgres URL the port 5433 instead of 5432 and password authentication failed in postgres logs and in postgres ports it mapped into a localhost only (127.0.0.1)
 - Failed attempt and what changed your thinking: when i cnanged the URL port and added the value of DATABASE_URL and requested again localhost:8080/ready the problem still exists. so, when i inspected in the postgres logs i found a fatal error which is password authentication failed and this lead me to make sure that the DATABASE_URL of the server.js like the DATABASE_URL environment variable for Docker-compose.yml and found that they are different in POSTGRES_PASSWORD in docker-compose.yml in the last letter (c instead of d)
 - Root cause: in `server.js` the value of DATABASE_URL doesn't exist , in `config/app.env` there is wrong error port and in `docker-compose.yml` there is wrong POSTGRES_PASSWORD
-- Fix: corrected the database URL in `app.env` and put the DATABASE_URL value in `server.js` and Fixed `docker-compose.yml` with the right POSTGRES_PASSWORD
+- Fix: corrected the database URL in `app.env` and put the DATABASE_URL value in `server.js` and Fixed `docker-compose.yml` with the right POSTGRES_PASSWORD and changed the postgres ports in docker-compose.yml from (ports: from ["127.0.0.1:15432:5432"] to ["0.0.0.0:15432:5432"])
 - Retest evidence: when requesting /ready path the postgress nows appears to be ready and here is the output: `{"dependencies":{"postgres":"ready","redis":"unavailable"},"instance_id":"app-01","service":"barq-api","status":"not_ready","version":"2.0.0"}` 
-- Related commit: e67b527b6788dd047bec06ca5236ba0227ea2cfb
+- Related commit: 5919e5dbdeca63ee27cdaa48195b403d2adac8bb
 - Remaining uncertainty: NO
+
+## Entry 05 / 2026-09-09 / 6:47 PM
+- Symptom: redis is not ready when requesting /ready path
+- Hypothesis: maybe there is something wrong in redis connection or docker-compose file in ports or something else
+- Command or test: `cat docker-compose.yml app/server.js config/app.env`
+- Actual output: found in config/app.env that the port for REDIS_URL 6380 instead of 6379 also, in docker-compose.yml the port mapped to only recieve from localhost which is (127.0.0.1:16379:6379) and it have to be to any ip to enable communication between services (0.0.0.0)
+- Failed attempt and what changed your thinking: at first i noticed only the 6380 port and try to test the /ready path but, it still not ready. until i found the (127.0.0.1) in the ports of redis in docker-compose.yml
+- Root cause: in config/app.env the REDIS_URL 6380 instead of 6379 and 
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
