@@ -109,8 +109,8 @@ APP_PORT=8080
 - Command or test: `cat docker-compose.yml app/server.js config/app.env`
 - Actual output: found in config/app.env that the port for REDIS_URL 6380 instead of 6379 also, in docker-compose.yml the port mapped to only recieve from localhost which is (127.0.0.1:16379:6379) and it have to be to any ip to enable communication between services (0.0.0.0)
 - Failed attempt and what changed your thinking: at first i noticed only the 6380 port and try to test the /ready path but, it still not ready. until i found the (127.0.0.1) in the ports of redis in docker-compose.yml
-- Root cause: in config/app.env the REDIS_URL 6380 instead of 6379 and 
-- Fix:
+- Root cause: in `config/app.env` the REDIS_URL 6380 instead of 6379 and in redis ports in `docker-compose.yml` it was `["127.0.0.1:16379:6379] instead of ["0.0.0.0:16379:6379"]`
+- Fix: changed REDIS_URL in config/app.env from 6380 to 6379 also, changed redis ports in `docker-compose.yml` ` from ["127.0.0.1:16379:6379] to ["0.0.0.0:16379:6379"]`
 - Retest evidence:
 - Related commit:
-- Remaining uncertainty:
+- Remaining uncertainty: NO
