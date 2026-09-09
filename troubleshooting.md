@@ -99,6 +99,6 @@ APP_PORT=8080
 - Failed attempt and what changed your thinking: when i cnanged the URL port and added the value of DATABASE_URL and requested again localhost:8080/ready the problem still exists. so, when i inspected in the postgres logs i found a fatal error which is password authentication failed and this lead me to make sure that the DATABASE_URL of the server.js like the DATABASE_URL environment variable for Docker-compose.yml and found that they are different in POSTGRES_PASSWORD in docker-compose.yml in the last letter (c instead of d)
 - Root cause: in `server.js` the value of DATABASE_URL doesn't exist , in `config/app.env` there is wrong error port and in `docker-compose.yml` there is wrong POSTGRES_PASSWORD
 - Fix: corrected the database URL in `app.env` and put the DATABASE_URL value in `server.js` and Fixed `docker-compose.yml` with the right POSTGRES_PASSWORD
-- Retest evidence: when requesting /ready path the postgress 
+- Retest evidence: when requesting /ready path the postgress nows appears to be ready and here is the output: `{"dependencies":{"postgres":"ready","redis":"unavailable"},"instance_id":"app-01","service":"barq-api","status":"not_ready","version":"2.0.0"}` 
 - Related commit: e67b527b6788dd047bec06ca5236ba0227ea2cfb
 - Remaining uncertainty: NO
