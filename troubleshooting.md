@@ -113,5 +113,18 @@ APP_PORT=8080
 - Fix: changed REDIS_URL in config/app.env from 6380 to 6379 also, changed redis ports in `docker-compose.yml` ` from ["127.0.0.1:16379:6379] to ["0.0.0.0:16379:6379"]`
 - Retest evidence: Now redis is ready and the test output is: 
 `{"dependencies":{"postgres":"ready","redis":"ready"},"instance_id":"app-01","service":"barq-api","status":"ready","version":"2.0.0"}`
-- Related commit: 
+- Related commit: baa006949093a41b7618b3ff4cdfaa2be08e3d20
 - Remaining uncertainty: NO
+
+
+## Entry 06 / 2026-09-09 / 12:22 AM
+- Symptom: data is not presistent when writing records in postgres
+- Hypothesis: I think there is a problem in volumes section in docker-compose with postgres or maybe postgres service doesn't have volumes
+- Command or test:  cat docker-compose.yml | grep -A 20 "postgres", 
+- Actual output: docker-compose file content
+- Failed attempt and what changed your thinking: I thought that there is no volume in the beginning but, found that there is the postgres-data volume. and realized that the `/var/lib/postgresql/data` file which postgres stores records in it. was stored in temporary file system (tmpfs) which storing the data in temperary RAM and when it stops all the data are forgotten. 
+- Root cause: `/var/lib/postgresql/data` was stored in tmpfs(temporary file system) which lead to non presistency when stoping the container
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
