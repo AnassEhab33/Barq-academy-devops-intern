@@ -45,7 +45,7 @@ app-02    | {"timestamp": "2026-09-08T21:50:30.405+00:00", "level": "INFO", "ser
 - Remaining uncertainty: No
 
 
-## Entry 03 / 2026-09-09 / 1:52 AM
+## Entry 03 / 2026-09-09 / 3:18 AM
 - Symptom: Received a 503 status code when connecting to localhost:8080
 - Hypothesis: I think it's a backend problem Maybe in the server itself. i will investigate in docker logs for nginx container
 - Command or test: curl localhost:8080, docker logs nginx, docker exec -it app-01 sh, env | grep APP_
@@ -67,9 +67,9 @@ APP_MESSAGE=Welcome to BARQ Systems
 APP_PORT=8080`
 
 
-- **Failed attempt and what changed your thinking:** at the beginning i found in nginx.conf that the upstream in app-01 was sending requests in port 8081 and thought if i changed to 8080 i will solve the problem but, it still exists. so, i investigated more and found that the app-01,02 are listening on their APP_HOST: "127.0.0.1" env variable that was ovverriden the implemented values in server.py (host=os.getenv("APP_HOST", "0.0.0.0")) by docker-compose environment.
-- Root cause: Docker compose APP_HOST environment value overridden the implemented (host=os.getenv("APP_HOST", "0.0.0.0")) in the server.js which caused the app-01,02 containers to don't listen to any traffic unless it's from this overridden env that was configured in docker-compose (APP_HOST: "127.0.0.1")
-- Fix:
-- Retest evidence:
-- Related commit:
-- Remaining uncertainty:
+- **Failed attempt and what changed your thinking:** at the beginning i found in nginx.conf that the upstream in app-01 was sending requests in port 8081 and thought if i changed to 8080 i will solve the problem but, it still exists. so, i investigated more and more and found that the app-01,02 are listening on APP_HOST: "127.0.0.1" env variable which was overriden the implemented values in server.py (host=os.getenv("APP_HOST", "0.0.0.0")) by docker-compose environment.
+- Root cause: Docker compose APP_HOST environment value overridden the implemented (host=os.getenv("APP_HOST", "0.0.0.0")) in the server.js which caused the app-01,02 containers to don't listen to any traffic unless it's from this overriden env that was configured in docker-compose (APP_HOST: "127.0.0.1")
+- Fix: Removing the APP_HOST value leaving the actual value of the APP_HOST of the server.js
+- Retest evidence: when i `curl localhost:8080` the output is now: `{"instance_id":"app-01","message":"Welcome to BARQ Systems","service":"barq-api","version":"2.0.0"}`
+- Related commit: 
+- Remaining uncertainty: No
