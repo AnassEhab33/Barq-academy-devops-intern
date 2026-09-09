@@ -94,10 +94,11 @@ APP_PORT=8080
 ## Entry 04 / 2026-09-09 / 6:00 PM
 - Symptom: When requesting localhost:8080/ready it gives that postgres is unavailable
 - Hypothesis: Maybe there is something wrong in the Database URL in server.py or docker-compose.yml 
-- Command or test: `cat server.py` , `cat config/app.env` and `cat docker-compose.yml` 
-- Actual output: found 2 main issues which are: `in server.py` DATABASE_URL value doens't exist. also, in `config/app.env` in the postgres URL the port 5433 instead of 5432 
-- Failed attempt and what changed your thinking: 
-- Root cause: 
-- Retest evidence: 
+- Command or test: `cat server.py` , `cat config/app.env` and `cat docker-compose.yml` ,`docker logs postgres` , `docker exec -it postgres sh` and `psql -U barq_app`
+- Actual output: found 3 main issues which are: `in server.py` DATABASE_URL value doens't exist. also, in `config/app.env` in the postgres URL the port 5433 instead of 5432 and password authentication failed in postgres logs
+- Failed attempt and what changed your thinking: when i cnanged the URL port and added the value of DATABASE_URL and requested again localhost:8080/ready the problem still exists. so, when i inspected in the postgres logs i found a fatal error which is password authentication failed and this lead me to make sure that the DATABASE_URL of the server.js like the DATABASE_URL environment variable for Docker-compose.yml and found that they are different in POSTGRES_PASSWORD in docker-compose.yml in the last letter (c instead of d)
+- Root cause: in `server.js` the value of DATABASE_URL doesn't exist , in `config/app.env` there is wrong error port and in `docker-compose.yml` there is wrong POSTGRES_PASSWORD
+- Fix: corrected the database URL in `app.env` and put the DATABASE_URL value in `server.js` and Fixed `docker-compose.yml` with the right POSTGRES_PASSWORD
+- Retest evidence: when requesting /ready path the postgress 
 - Related commit: e67b527b6788dd047bec06ca5236ba0227ea2cfb
-- Remaining uncertainty: yes
+- Remaining uncertainty: NO
