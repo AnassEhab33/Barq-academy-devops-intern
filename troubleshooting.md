@@ -71,5 +71,5 @@ APP_PORT=8080`
 - Root cause: Docker compose APP_HOST environment value overridden the implemented (host=os.getenv("APP_HOST", "0.0.0.0")) in the server.js which caused the app-01,02 containers to don't listen to any traffic unless it's from this overriden env that was configured in docker-compose (APP_HOST: "127.0.0.1")
 - Fix: Removing the APP_HOST value leaving the actual value of the APP_HOST of the server.js
 - Retest evidence: when i `curl localhost:8080` the output is now: `{"instance_id":"app-01","message":"Welcome to BARQ Systems","service":"barq-api","version":"2.0.0"}`
-- Related commit: 
+- Related commit: fce3aa2a1591f1e02f1c23abebfca4e872b79ca8
 - Remaining uncertainty: No
