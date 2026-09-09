@@ -132,13 +132,20 @@ APP_PORT=8080
 ## Entry 07 / 2026-09-09 / 12:54 AM
 - Symptom: when requesting /instance path it continuously give me the instance_id of app-01 only and not load balances between the app01,02 
 - Hypothesis: maybe there is a problem in the upstream in nginx.conf or a problem of network in app-02 in docker-compose.yml
-- Command or test: `cat nginx.conf` and `cat docker-compose.yml` and `docker compose logs -f`
-- Actual output: outputs of the nginx.conf and docker-compose.yml files and for docker compose logs:
+- Command or test: `cat nginx.conf` and `cat docker-compose.yml` and `docker compose logs -f` and `curl localhost:8080/instance`
+- Actual output: outputs of the nginx.conf and docker-compose.yml files and in curl request was `{"instance_id":"app-01","service":"barq-api","status":"ok","version":"2.0.0"}` 
+and for docker compose logs:
+```
+app-01    | {"timestamp": "2026-09-09T22:05:35.226+00:00", "level": "INFO", "service": "barq-api", "event": "http_request", "instance_id": "app-01", "request_id": "d9c1df15b37a41d792854b767fc5143e", "method": "GET", "path": "/health", "status": 200, "duration_ms": 0.087}
+app-01    | 127.0.0.1 - - [09/Sep/2026 22:05:35] "GET /health HTTP/1.1" 200 -
+app-02    | {"timestamp": "2026-09-09T22:05:35.442+00:00", "level": "INFO", "service": "barq-api", "event": "http_request", "instance_id": "app-01", "request_id": "d700d43437ec487d8b31773fc3386bcb", "method": "GET", "path": "/health", "status": 200, "duration_ms": 0.084}
+app-02    | 127.0.0.1 - - [09/Sep/2026 22:05:35] "GET /health HTTP/1.1" 200 
+```
 
-
-- Failed attempt and what changed your thinking: 
-- Root cause:
-- Fix:
-- Retest evidence:
+- Failed attempt and what changed your thinking: at the begining i checked the upstream of the nginx.config but, didn't find anything suspcious then, moved to docker compose logs to see if app-02 is running with app-01 or not and found that it was already running. but, in the provided log output it shows for app-02 response logs "instance_id": "app-01" which was strange. I then checked docker-compose.yml to see the INSTANCE_ID and it was "app-01" on app-02 !
+- Root cause: wrong INSTANCE_ID name configured in app-02 in docker-compose.yml
+- Fix: changed INSTANCE_ID to app-02 in docker-compose.yml
+- Retest evidence: curl http://127.0.0.1:8080/instance now it shows me both instances ids
+{"instance_id":"app-02","service":"barq-api","status":"ok","version":"2.0.0"}
 - Related commit:
-- Remaining uncertainty:
+- Remaining uncertainty: NO
