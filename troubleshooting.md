@@ -126,5 +126,19 @@ APP_PORT=8080
 - Root cause: `/var/lib/postgresql/data` was stored in tmpfs(temporary file system) which lead to non presistency when stoping the container
 - Fix: removed the `/var/lib/postgresql/data` file path from tmpfs and added to postgres-data volume
 - Retest evidence: showing the inserted records after restarting the container (`{"instance_id":"app-01","records":[{"id":1,"title":"Review service readiness"},{"id":2,"title":"Document the operating procedure"},{"id":3,"title":"testing write"}],"service":"barq-api","version":"2.0.0"}`)
-- Related commit: 
+- Related commit: e0780beb2d8bd87d6c6dabb62fd7a5f15ee83ae0
 - Remaining uncertainty: NO
+
+## Entry 07 / 2026-09-09 / 12:54 AM
+- Symptom: when requesting /instance path it continuously give me the instance_id of app-01 only and not load balances between the app01,02 
+- Hypothesis: maybe there is a problem in the upstream in nginx.conf or a problem of network in app-02 in docker-compose.yml
+- Command or test: `cat nginx.conf` and `cat docker-compose.yml` and `docker compose logs -f`
+- Actual output: outputs of the nginx.conf and docker-compose.yml files and for docker compose logs:
+
+
+- Failed attempt and what changed your thinking: 
+- Root cause:
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
