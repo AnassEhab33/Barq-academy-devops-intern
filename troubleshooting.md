@@ -95,10 +95,10 @@ APP_PORT=8080
 - Symptom: When requesting localhost:8080/ready it gives that postgres is unavailable
 - Hypothesis: Maybe there is something wrong in the Database URL in server.py or docker-compose.yml 
 - Command or test: `cat server.py` , `cat config/app.env` and `cat docker-compose.yml`
-- Actual output:
+- Actual output: found 2 main issues which are: `in server.py` DATABASE_URL value doens't exist. also, in `config/app.env` in the postgres URL the port 5433 instead of 5432 
 - Failed attempt and what changed your thinking:
 - Root cause:
-- Fix:
+- Fix: corrected the database URL in app.env and put the DATABASE_URL value in server.js 
 - Retest evidence:
 - Related commit:
-- Remaining uncertainty:
+- Remaining uncertainty: yes
