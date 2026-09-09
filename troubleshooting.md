@@ -127,4 +127,4 @@ APP_PORT=8080
 - Fix: removed the `/var/lib/postgresql/data` file path from tmpfs and added to postgres-data volume
 - Retest evidence: showing the inserted records after restarting the container (`{"instance_id":"app-01","records":[{"id":1,"title":"Review service readiness"},{"id":2,"title":"Document the operating procedure"},{"id":3,"title":"testing write"}],"service":"barq-api","version":"2.0.0"}`)
 - Related commit: 
-- Remaining uncertainty:
+- Remaining uncertainty: NO
