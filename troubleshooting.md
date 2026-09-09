@@ -47,8 +47,8 @@ app-02    | {"timestamp": "2026-09-08T21:50:30.405+00:00", "level": "INFO", "ser
 
 ## Entry 03 / 2026-09-09 / 1:52 AM
 - Symptom: Received a 503 status code when connecting to localhost:8080
-- Hypothesis: I think it's a backend problem Maybe in the server itself. i will investigate in docker logs for nginx
-- Command or test: curl localhost:8080, docker logs nginx
+- Hypothesis: I think it's a backend problem Maybe in the server itself. i will investigate in docker logs for nginx container
+- Command or test: curl localhost:8080, docker logs nginx, docker exec -it app-01 sh, env | grep APP_
 - Actual output: 
 
 **For curl localhost:8080** <html>
@@ -59,12 +59,17 @@ app-02    | {"timestamp": "2026-09-08T21:50:30.405+00:00", "level": "INFO", "ser
 </body>
 </html>
 
-**For docker logs ngnix:**
+**For docker logs nginx:**
 `{"timestamp":"2026-09-08T22:39:49+00:00","service":"edge","request_id":"1cee02083fb37fb680c919f3b2881aaa","method":"GET","path":"/","status":502,"upstream":"172.20.0.2:8081","upstream_status":"502","request_time":"0.001"}`
 
-- **Failed attempt and what changed your thinking:** at the beginning i didn't notice but now, i found in nginx.conf that the upstream in app-01 was sending requests in port 8081
-- Root cause: found in nginx.conf that the upstream in app-01 was sending requests in port 8081 and not 8080
-- Fix: 
+**For env | grep APP_ in app-01 container:** `APP_HOST=127.0.0.1
+APP_MESSAGE=Welcome to BARQ Systems
+APP_PORT=8080`
+
+
+- **Failed attempt and what changed your thinking:** at the beginning i found in nginx.conf that the upstream in app-01 was sending requests in port 8081 and thought if i changed to 8080 i will solve the problem but, it still exists. so, i investigated more and found that the app-01,02 are listening on their APP_HOST: "127.0.0.1" env variable that was ovverriden the implemented values in server.py (host=os.getenv("APP_HOST", "0.0.0.0")) by docker-compose environment.
+- Root cause: Docker compose APP_HOST environment value overridden the implemented (host=os.getenv("APP_HOST", "0.0.0.0")) in the server.js which caused the app-01,02 containers to don't listen to any traffic unless it's from this overridden env that was configured in docker-compose (APP_HOST: "127.0.0.1")
+- Fix:
 - Retest evidence:
 - Related commit:
 - Remaining uncertainty:
