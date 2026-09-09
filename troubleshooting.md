@@ -117,7 +117,7 @@ APP_PORT=8080
 - Remaining uncertainty: NO
 
 
-## Entry 06 / 2026-09-09 / 12:22 AM
+## Entry 06 / 2026-09-10 / 12:22 AM
 - Symptom: data is not presistent when writing records in postgres
 - Hypothesis: I think there is a problem in volumes section in docker-compose with postgres or maybe postgres service doesn't have volumes
 - Command or test:  `cat docker-compose.yml | grep -A 20 "postgres"`, `curl -H 'Content-Type: application/json' -d '{"title":"testing write"}' http://127.0.0.1:8080/records`
@@ -129,7 +129,7 @@ APP_PORT=8080
 - Related commit: e0780beb2d8bd87d6c6dabb62fd7a5f15ee83ae0
 - Remaining uncertainty: NO
 
-## Entry 07 / 2026-09-09 / 12:54 AM
+## Entry 07 / 2026-09-10 / 12:54 AM
 - Symptom: when requesting /instance path it continuously give me the instance_id of app-01 only and not load balances between the app01,02 
 - Hypothesis: maybe there is a problem in the upstream in nginx.conf or a problem of network in app-02 in docker-compose.yml
 - Command or test: `cat nginx.conf` and `cat docker-compose.yml` and `docker compose logs -f` and `curl localhost:8080/instance`
@@ -150,5 +150,32 @@ app-02    | 127.0.0.1 - - [09/Sep/2026 22:05:35] "GET /health HTTP/1.1" 200
 {"instance_id":"app-01","service":"barq-api","status":"ok","version":"2.0.0"}
 {"instance_id":"app-02","service":"barq-api","status":"ok","version":"2.0.0"}
 ```
+- Related commit: 263e3802803628e097df5506edaf7e3a7c5ae10d
+- Remaining uncertainty: NO
+
+
+## Entry 08 / 2026-09-10 / time
+- Symptom: When one of the two services is down the nginx return an error 504 Gateway Time-out 
+- Hypothesis: something not configured well in nginx.conf related with upstream or timeout but, i don't remember the parameter
+- Command or test: `cat nginx/nginx.conf | grep -E "*timeout* | *upstream*"` and `docker logs nginx`
+- Actual output: 
+for grep output
+```
+grep: warning: * at start of expression
+    log_format assessment escape=json '{"timestamp":"$time_iso8601","service":"edge","request_id":"$request_id","method":"$request_method","path":"$uri","status":$status,"upstream":"$upstream_addr","upstream_status":"$upstream_status","request_time":"$request_time"}';
+    upstream application_pool {
+            proxy_connect_timeout 2s;
+            proxy_read_timeout 3s;
+            proxy_next_upstream off;
+```
+For nginx logs:
+```
+2026/09/09 22:43:44 [error] 23#23: *1 upstream timed out (110: Operation timed out) while connecting to upstream, client: 172.20.0.1, server: _, request: "GET /instance HTTP/1.1", upstream: "http://172.20.0.3:8080/instance", host: "localhost:8080"
+{"timestamp":"2026-09-09T22:43:44+00:00","service":"edge","request_id":"5c7f465ace329f3d87753ab36ca2be57","method":"GET","path":"/instance","status":504,"upstream":"172.20.0.3:8080","upstream_status":"504","request_time":"2.002"}
+```
+- Failed attempt and what changed your thinking: I initially thought the problem was related to `max_fails`, so I changed its value and configured `fail_timeout`. However, this did not solve the problem. After investigating further, I realized that `proxy_next_upstream off` was preventing NGINX from forwarding the traffic to the other application server when one application fails.
+- Root cause: in nginx.conf the `proxy_next_upstream` parameter was off preventing nginx server from forwarding the request to the next upstream if the request failed
+- Fix:
+- Retest evidence:
 - Related commit:
 - Remaining uncertainty: NO
