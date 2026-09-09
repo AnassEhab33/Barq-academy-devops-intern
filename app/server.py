@@ -56,7 +56,7 @@ def create_app(config=None, dependencies=None):
     instance = app.config["INSTANCE_ID"]
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", instance):
         raise ValueError("Invalid INSTANCE_ID")
-    deps = dependencies or Dependencies(os.getenv("DATABASE_URL", ""),
+    deps = dependencies or Dependencies(os.getenv("DATABASE_URL", "postgresql://barq_app:BarqLabOnly_7qN2vK8d@postgres:5432/barq_tasks"),
                                         os.getenv("REDIS_URL", "redis://redis:6379/0"))
     app.extensions["dependencies"] = deps
 
