@@ -146,6 +146,9 @@ app-02    | 127.0.0.1 - - [09/Sep/2026 22:05:35] "GET /health HTTP/1.1" 200
 - Root cause: wrong INSTANCE_ID name configured in app-02 in docker-compose.yml
 - Fix: changed INSTANCE_ID to app-02 in docker-compose.yml
 - Retest evidence: curl http://127.0.0.1:8080/instance now it shows me both instances ids
+```
+{"instance_id":"app-01","service":"barq-api","status":"ok","version":"2.0.0"}
 {"instance_id":"app-02","service":"barq-api","status":"ok","version":"2.0.0"}
+```
 - Related commit:
 - Remaining uncertainty: NO
