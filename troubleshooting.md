@@ -120,11 +120,11 @@ APP_PORT=8080
 ## Entry 06 / 2026-09-09 / 12:22 AM
 - Symptom: data is not presistent when writing records in postgres
 - Hypothesis: I think there is a problem in volumes section in docker-compose with postgres or maybe postgres service doesn't have volumes
-- Command or test:  cat docker-compose.yml | grep -A 20 "postgres", 
+- Command or test:  `cat docker-compose.yml | grep -A 20 "postgres"`, `curl -H 'Content-Type: application/json' -d '{"title":"testing write"}' http://127.0.0.1:8080/records`
 - Actual output: docker-compose file content
 - Failed attempt and what changed your thinking: I thought that there is no volume in the beginning but, found that there is the postgres-data volume. and realized that the `/var/lib/postgresql/data` file which postgres stores records in it. was stored in temporary file system (tmpfs) which storing the data in temperary RAM and when it stops all the data are forgotten. 
 - Root cause: `/var/lib/postgresql/data` was stored in tmpfs(temporary file system) which lead to non presistency when stoping the container
-- Fix:
-- Retest evidence:
-- Related commit:
+- Fix: removed the `/var/lib/postgresql/data` file path from tmpfs and added to postgres-data volume
+- Retest evidence: showing the inserted records after restarting the container (`{"instance_id":"app-01","records":[{"id":1,"title":"Review service readiness"},{"id":2,"title":"Document the operating procedure"},{"id":3,"title":"testing write"}],"service":"barq-api","version":"2.0.0"}`)
+- Related commit: 
 - Remaining uncertainty:
