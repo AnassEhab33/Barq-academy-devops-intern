@@ -175,7 +175,7 @@ For nginx logs:
 ```
 - Failed attempt and what changed your thinking: I initially thought the problem was related to `max_fails`, so I changed its value and configured `fail_timeout`. However, this did not solve the problem. After investigating further, I realized that `proxy_next_upstream off` was preventing NGINX from forwarding the traffic to the other application server when one application fails.
 - Root cause: in nginx.conf the `proxy_next_upstream` parameter was off preventing nginx server from forwarding the request to the next upstream if the request failed
-- Fix:
-- Retest evidence:
+- Fix: deleted `proxy_next_upstream off;` parameter in nginx.conf
+- Retest evidence: continusly  `{"instance_id":"app-02","service":"barq-api","status":"ok","version":"2.0.0"}`
 - Related commit:
 - Remaining uncertainty: NO
