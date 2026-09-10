@@ -184,11 +184,11 @@ For nginx logs:
 ## Entry 09 / 2026-09-10 / 9:41
 - Symptom: Redis DB is not presistent
 - Hypothesis: I think it doesn't have a volume in docker-compose.yml
-- Command or test: cat docker-compose.yml
-- Actual output: docker-compose.yml content
-- Failed attempt and what changed your thinking: I am right i didn't find any volume for redis but, when checking the volume i noticed something also, wrong in the command paramter which is `--appendonly` was set to "no" this leads to not appending the changes happend in redis so, it will not save it.
-- Root cause: redis service command in docker-compose.yml
-- Fix:
-- Retest evidence:
+- Command or test: cat docker-compose.yml , curl localhost:8080/counter 
+- Actual output: docker-compose.yml content , and when downing docker-compose and requests /counter the counter resets to 0
+- Failed attempt and what changed your thinking: I am right i didn't find any volume for redis but, when checking the volume i noticed something also, wrong in the save command paramter which is `--appendonly` was set to "no" this leads to not appending the changes happend in redis in the AOF so, the data will not be saved.
+- Root cause: redis service save command in docker-compose.yml have `--appendonly no` which causes redis to not store it's latest changes in AOF file
+- Fix: Changed redis save command `--appendonly` from "no" to "yes" also, added a `redis-data volume`
+- Retest evidence: docker compose rm , curl localhost:8080/counter
 - Related commit:
 - Remaining uncertainty:
