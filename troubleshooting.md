@@ -189,6 +189,6 @@ For nginx logs:
 - Failed attempt and what changed your thinking: I am right i didn't find any volume for redis but, when checking the volume i noticed something also, wrong in the save command paramter which is `--appendonly` was set to "no" this leads to not appending the changes happend in redis in the AOF so, the data will not be saved.
 - Root cause: redis service save command in docker-compose.yml have `--appendonly no` which causes redis to not store it's latest changes in AOF file
 - Fix: Changed redis save command `--appendonly` from "no" to "yes" also, added a `redis-data volume`
-- Retest evidence: docker compose rm , curl localhost:8080/counter
+- Retest evidence: docker compose down,up , curl localhost:8080/counter and found that record number still the same and not resets to 0.
 - Related commit:
-- Remaining uncertainty:
+- Remaining uncertainty: NO
