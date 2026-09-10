@@ -179,3 +179,16 @@ For nginx logs:
 - Retest evidence: continuously have a response from app-02 which indicates success forwarding `{"instance_id":"app-02","service":"barq-api","status":"ok","version":"2.0.0"}`
 - Related commit: c1496476f3e8a7ce0a8bfb215eac5a8043588acd
 - Remaining uncertainty: NO
+
+
+## Entry 09 / 2026-09-10 / 9:41
+- Symptom: Redis DB is not presistent
+- Hypothesis: I think it doesn't have a volume in docker-compose.yml
+- Command or test: cat docker-compose.yml
+- Actual output: docker-compose.yml content
+- Failed attempt and what changed your thinking: I am right i didn't find any volume for redis but, when checking the volume i noticed something also, wrong in the command paramter which is `--appendonly` was set to "no" this leads to not appending the changes happend in redis so, it will not save it.
+- Root cause: redis service command in docker-compose.yml
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
