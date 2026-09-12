@@ -193,7 +193,7 @@ For nginx logs:
 - Related commit: d33060e593ef1843951155164018cce8a5f59ddc
 - Remaining uncertainty: NO
 
-## Entry 10 / 2026-09-10 / 6:13 PM
+## Entry 10 / 2026-09-12 / 6:13 PM
 - Symptom: Found nginx server can access Backend network
 - Hypothesis: i think it defined both netowrks frontend and backend in nginx service in docker-compose.yml
 - Command or test: docker network inspect barq-assessment_backend , cat docker-compose.yml
@@ -280,3 +280,15 @@ docker network inspect barq-assessment_backend
 ```
 - Related commit: cfef474c5251455b1a504fd13d1faafa5227fa8e
 - Remaining uncertainty: NO
+
+## Entry 11 / 2026-09-13 / 2:00 AM
+- Symptom: docker compose services doesn't restart when testing it with failure_test.py
+- Hypothesis: there is an error in the restart policy in the app-01,02 services
+- Command or test: cat docker-compose.yml
+- Actual output: docker-compose.yml, docker watch ps
+- Failed attempt and what changed your thinking: NONE
+- Root cause: when the service fail it doesn't restart
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
