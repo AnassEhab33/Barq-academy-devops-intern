@@ -239,8 +239,42 @@ docker network inspect barq-assessment_backend
         }
 ```
 - Failed attempt and what changed your thinking: NONE
-- Root cause: the user of application can manipulate 
-- Fix:
-- Retest evidence:
+- Root cause: nginx server can reach the backend network and this is dangerous because, the user of the application can manipulate the nginx requests to access backend services and databases (called SSRF vulerability)
+- Fix: deleted the backend network from nginx network service in docker-compose.yml
+- Retest evidence: 
+```
+docker network inspect barq-assessment_backend
+        "Containers": {
+            "218c4e596c8fce78d3b6c4a0f5bdf75cf24049943e7500efda94acea71640e49": {
+                "Name": "app-01",
+                "EndpointID": "1bffe0efff71e632c88b7348448e2a9d4f135b94f986a95880d1ae42cb7550fd",
+                "MacAddress": "92:ea:8f:47:94:21",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "2937b6fb55de7ed3eef0c798c7af6b41d156d57573a353862644e9d7ac9103a6": {
+                "Name": "postgres",
+                "EndpointID": "d6e740106983b4e004dae66932fccd9474dc7de3ab8036e31872a8098e7bdbcb",
+                "MacAddress": "0a:05:3c:f8:ed:c6",
+                "IPv4Address": "172.19.0.4/16",
+                "IPv6Address": ""
+            },
+            "ac6feb08c248db7a2c6688e7cd826eb05081f768b025b1d6db6d9d89eb89e358": {
+                "Name": "redis",
+                "EndpointID": "d6b1bc00ae9e0c87597586f202b2d67a288da662a50bdecb07bfacf8de50eb8b",
+                "MacAddress": "62:c8:3b:59:57:26",
+                "IPv4Address": "172.19.0.5/16",
+                "IPv6Address": ""
+            },
+            "eb792cb45b85d477e7e383a7d8411e74e7f0efa882122f52a45c0f900986ad89": {
+                "Name": "app-02",
+                "EndpointID": "b5ed05ba38b5fe50f68e0140ae9d1df322e5b697470c6f852f46b33f7d13055c",
+                "MacAddress": "62:87:6d:df:26:37",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            }
+        }
+
+```
 - Related commit:
-- Remaining uncertainty:
+- Remaining uncertainty: NO
