@@ -2,7 +2,7 @@ name: barq-assessment
 x-app: &app
   build: .
   init: true
-  restart: "no"
+  restart: always
   env_file: ./config/app.env
   environment: &app-env
     APP_PORT: "8080"

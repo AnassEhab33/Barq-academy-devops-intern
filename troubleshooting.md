@@ -288,7 +288,7 @@ docker network inspect barq-assessment_backend
 - Actual output: docker-compose.yml, docker watch ps
 - Failed attempt and what changed your thinking: NONE
 - Root cause: when the service fail it doesn't restart
-- Fix:
-- Retest evidence:
+- Fix: change the restart policy in the confiugrations of app01,02 in docker-compose.yml to be always
+- Retest evidence: services restarted successfully
 - Related commit:
-- Remaining uncertainty:
+- Remaining uncertainty: NO
