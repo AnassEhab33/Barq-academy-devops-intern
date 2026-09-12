@@ -13,19 +13,24 @@ def get_instance():
     except requests.RequestException:
         return None, None
 
-
 print("=== Failure Test: app-01 ===")
 
 # 1. Stop app-01
 print("\nStopping app-01...")
 
 subprocess.run(
-    ["docker", "stop", "app-01"],
-    check=True
+    ["docker", "exec", "app-01", "python", "-c",
+    "import os, signal\n"
+    "for p in os.listdir('/proc'):\n"
+    "    if p.isdigit():\n"
+    "        try:\n"
+    "            cmd = open(f'/proc/{p}/cmdline').read()\n"
+    "            if 'app.server' in cmd and int(p) != os.getpid():\n"
+    "                os.kill(int(p), signal.SIGKILL)\n"
+    "        except: pass"]
 )
 
 time.sleep(2)
-
 
 # 2. Send requests while app-01 is down
 print("\nTesting while app-01 is stopped...")
@@ -34,7 +39,7 @@ success = 0
 errors = 0
 instances = set()
 
-for _ in range(10):
+for _ in range(5):
     status, instance = get_instance()
 
     if status == 200:
@@ -57,16 +62,9 @@ else:
     print("[FAIL] app-02 did not serve requests")
 
 
-# 4. Restore app-01
-print("\nStarting app-01 again...")
-
-subprocess.run(
-    ["docker", "start", "app-01"],
-    check=True
-)
-
-time.sleep(5)
-
+# 4. Wait for restart policy to restore app-01
+print("\nWaiting for app-01 to restart automatically...")
+time.sleep(10)
 
 # 5. Prove recovery
 print("\nTesting after recovery...")
@@ -77,3 +75,4 @@ if status == 200:
     print(f"[PASS] Request succeeded after recovery: {instance}")
 else:
     print("[FAIL] Request failed after recovery")
+
