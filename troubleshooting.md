@@ -192,3 +192,55 @@ For nginx logs:
 - Retest evidence: docker compose down,up , curl localhost:8080/counter and found that record number still the same and not resets to 0.
 - Related commit: d33060e593ef1843951155164018cce8a5f59ddc
 - Remaining uncertainty: NO
+
+## Entry 10 / 2026-09-10 / 6:13 PM
+- Symptom: Found nginx server can access Backend network
+- Hypothesis: i think it defined both netowrks frontend and backend in nginx service in docker-compose.yml
+- Command or test: docker network inspect barq-assessment_backend , cat docker-compose.yml
+- Actual output:
+```
+docker network inspect barq-assessment_backend
+"Containers": {
+            "218c4e596c8fce78d3b6c4a0f5bdf75cf24049943e7500efda94acea71640e49": {
+                "Name": "app-01",
+                "EndpointID": "a013ae9d5533754deb4c9a1ed15241a2c7909be4db88e1cc46edfa0310be5325",
+                "MacAddress": "4e:cd:9e:b3:e4:f5",
+                "IPv4Address": "172.19.0.5/16",
+                "IPv6Address": ""
+            },
+            "2937b6fb55de7ed3eef0c798c7af6b41d156d57573a353862644e9d7ac9103a6": {
+                "Name": "postgres",
+                "EndpointID": "dccc9150ca7dcb1766f015ee8a5ba094d959a425fbccd2b36581b47da701a73a",
+                "MacAddress": "c2:7f:b6:79:45:3e",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            },
+            "2d509d49e15ca1ce3465c005c78227e301d134974fd7e670c78a6b5b0dc1bd8c": {
+                "Name": "nginx",
+                "EndpointID": "91fed2b683360c36c2556d0935f95f9246c2cf09c989bb403f3118d6f4aa95c0",
+                "MacAddress": "12:36:d2:cd:e7:ce",
+                "IPv4Address": "172.19.0.6/16",
+                "IPv6Address": ""
+            },
+            "ac6feb08c248db7a2c6688e7cd826eb05081f768b025b1d6db6d9d89eb89e358": {
+                "Name": "redis",
+                "EndpointID": "df659a89917fc0161e6a0ac6499fac08cb60d3489240d451e573a1d0eb056ed5",
+                "MacAddress": "2a:39:89:af:d3:8a",
+                "IPv4Address": "172.19.0.4/16",
+                "IPv6Address": ""
+            },
+            "eb792cb45b85d477e7e383a7d8411e74e7f0efa882122f52a45c0f900986ad89": {
+                "Name": "app-02",
+                "EndpointID": "0a71ca6f97362969b4c72a84f0f7d7b7839a60fbceebae234aa42fa7cd6513b8",
+                "MacAddress": "82:54:98:96:ba:df",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            }
+        }
+```
+- Failed attempt and what changed your thinking: NONE
+- Root cause: the user of application can manipulate 
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
