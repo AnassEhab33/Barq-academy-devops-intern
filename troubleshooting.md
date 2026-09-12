@@ -243,6 +243,8 @@ docker network inspect barq-assessment_backend
 - Fix: deleted the backend network from nginx network service in docker-compose.yml
 - Retest evidence: 
 ```
+docker exec -it nginx sh
+ping postgres
 docker network inspect barq-assessment_backend
         "Containers": {
             "218c4e596c8fce78d3b6c4a0f5bdf75cf24049943e7500efda94acea71640e49": {
@@ -276,5 +278,5 @@ docker network inspect barq-assessment_backend
         }
 
 ```
-- Related commit:
+- Related commit: cfef474c5251455b1a504fd13d1faafa5227fa8e
 - Remaining uncertainty: NO
