@@ -1,5 +1,6 @@
 name: CI Pipeline
 
+# 1. Triggers
 on:
   push:
     branches: [ "main" ]
@@ -25,6 +26,23 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+
+      - name: Build and Start Environment
+        run: docker compose up --build -d
+
+      - name: Wait for Services to be Ready
+        run: |
+          echo "Waiting for NGINX and App to become healthy..."
+          for i in {1..8}; do
+            if curl -s http://localhost:8080/health | grep -q '"status"'; then
+              echo "Services are ready!"
+              exit 0
+            fi
+            echo "Waiting... ($i/8)"
+            sleep 5
+          done
+          echo "Timeout: Services failed to become ready in time."
+          exit 1
 
       - name: Run Validation Script
         run: |
