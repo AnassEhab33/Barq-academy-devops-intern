@@ -326,7 +326,7 @@ CMD ["python", "-m", "app.server"]
 ```
 - Failed attempt and what changed your thinking: When checking Dockerfile it appeared that a non-root user was defined but, the developer used a root user to execute the command
 - Root cause: Dockerile USER defined in root instead of non root user which is app
-- Fix:
-- Retest evidence: 
+- Fix: Changed Dockerfile USER parameter to be app
+- Retest evidence: docker exec -it app-01 whoami and appeared with app
 - Related commit:
 - Remaining uncertainty: NO
