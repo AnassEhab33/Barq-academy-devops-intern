@@ -31,7 +31,10 @@ jobs:
 
       - name: Run App Unit Tests
         run: python -m unittest discover -s tests -v
-      
+      - name: Build and Pull Images
+        run: |
+          docker compose pull
+          docker compose build
       - name: Security Scaning on App Image
         uses: aquasecurity/trivy-action@master
         with:
@@ -57,7 +60,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
       
       - name: Build and Start Environment
-        run: docker compose up --build -d
+        run: docker compose up -d
 
       - name: Wait for Services to be Ready
         run: |
