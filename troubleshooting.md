@@ -1,5 +1,17 @@
 # Troubleshooting journal
 
+## Entry / date / time
+- Symptom:
+- Hypothesis:
+- Command or test:
+- Actual output:
+- Failed attempt and what changed your thinking:
+- Root cause:
+- Fix:
+- Retest evidence:
+- Related commit:
+- Remaining uncertainty:
+
 
 ## Entry 01 / 2026-09-09 / 12:31 AM
 - Symptom: When building the docker-compose.yml app-01 and app-02 had a 404 error when requesting /healthz
@@ -291,4 +303,30 @@ docker network inspect barq-assessment_backend
 - Fix: change the restart policy in the confiugrations of app01,02 in docker-compose.yml to be always
 - Retest evidence: services restarted successfully
 - Related commit: ed4bd8e01b71f9951ef3ffe0ac7404afe5c77c57
+- Remaining uncertainty: NO'
+
+## Entry 12 / 2026-09-13 / 9:45 PM
+- Symptom: Dockerfile was executing the command with the ROOT user instead of non-privlage user
+- Hypothesis: maybe dockerfile there is no defined non root user so, the default command executed would be a root
+- Command or test: docker exec -it app-01 whoami , cat Dockerfile
+- Actual output: 
+root , 
+```
+FROM python:3.12-slim-bookworm@sha256:782412e85d0f0984994c290652577d4018aff08145c85b262bb63dc0c7522254
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /srv
+RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --no-create-home app
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY --chown=app:app app/ ./app/
+COPY config/app.env /srv/app.env
+USER root
+EXPOSE 8080
+CMD ["python", "-m", "app.server"]
+```
+- Failed attempt and what changed your thinking: When checking Dockerfile it appeared that a non-root user was defined but, the developer used a root user to execute the command
+- Root cause: Dockerile USER defined in root instead of non root user which is app
+- Fix:
+- Retest evidence: 
+- Related commit:
 - Remaining uncertainty: NO
