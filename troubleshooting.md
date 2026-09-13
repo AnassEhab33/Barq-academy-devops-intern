@@ -328,5 +328,5 @@ CMD ["python", "-m", "app.server"]
 - Root cause: Dockerile USER defined in root instead of non root user which is app
 - Fix: Changed Dockerfile USER parameter to be app
 - Retest evidence: docker exec -it app-01 whoami and appeared with app
-- Related commit:
+- Related commit: 88a65a3449f3032066fd3fb13f15118450e2b92e
 - Remaining uncertainty: NO
