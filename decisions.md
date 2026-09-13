@@ -1,18 +1,5 @@
 # Technical decisions
 
-Record at least 5 decisions. Include assumptions and limits.
-
-## Decision
-- Choice:
-- Why:
-- Alternative:
-- Trade-off:
-- Evidence / commit:
-- Production improvement:
-
-Cover your base image, health checks, networks, timeouts/retries, restart/resource settings,
-storage and any other meaningful choices.
-
 ## Decision 01:
 - Choice: Changed The USER parameter in Dockerfile to be non-root user
 - Why: because, if the container compormised the attacker will have a low privlage so, he will not be able to execute dangerous commands
