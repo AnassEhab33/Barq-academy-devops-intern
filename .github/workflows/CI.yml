@@ -1,0 +1,36 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Environment Variables
+        run: cp .env.example .env
+
+      - name: Validate Docker Compose Configuration
+        run: docker compose config --quiet
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Run Validation Script
+        run: |
+          chmod +x validate.py
+          python validate.py
+
+      - name: Dump Docker Logs on Failure
+        if: failure()
+        run: docker compose logs
