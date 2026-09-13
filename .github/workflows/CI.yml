@@ -31,7 +31,31 @@ jobs:
 
       - name: Run App Unit Tests
         run: python -m unittest discover -s tests -v
-
+      
+      - name: Security Scaning on App Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'barq-assessment-app-01:latest'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: Security Scaning on NGINX Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'nginx:1.28-alpine'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: Security Scaning on PostgreSQL Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'postgres:16-alpine'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: Security Scaning on Redis Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'redis:7.4-alpine'
+          severity: 'CRITICAL,HIGH'
+      
       - name: Build and Start Environment
         run: docker compose up --build -d
 
