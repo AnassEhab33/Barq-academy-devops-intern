@@ -28,6 +28,7 @@ jobs:
 
       - name: Run Validation Script
         run: |
+          pip install requests
           chmod +x validate.py
           python validate.py
 
