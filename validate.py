@@ -3,7 +3,7 @@ import requests
 import subprocess
 import sys
 
-BASE_URL = "http://127.0.0.1:8080"
+BASE_URL = "http://127.0.0.1:8090"
 
 passed = 0
 failed = 0
