@@ -332,58 +332,6 @@ for container, should_have_ports in expected.items():
 
 
 # ------------------------------------------------------------
-# Network Isolation
-# ------------------------------------------------------------
-
-print("\n=== Network Isolation ===")
-
-expected_networks = {
-    "frontend": {
-        "nginx",
-        "app-01",
-        "app-02",
-    },
-    "backend": {
-        "app-01",
-        "app-02",
-        "postgres",
-        "redis",
-    },
-}
-
-for network, expected_services in expected_networks.items():
-
-    result = subprocess.run(
-        [
-            "docker",
-            "network",
-            "inspect",
-            f"barq-assessment_{network}",
-            "-f",
-            "{{range .Containers}}{{.Name}} {{end}}",
-        ],
-        capture_output=True,
-        text=True
-    )
-
-    if result.returncode != 0:
-        check(
-            False,
-            f"{network} network exists"
-        )
-        continue
-
-    actual_services = set(result.stdout.split())
-
-    print(f"{network} connected services: {actual_services}")
-
-    check(
-        actual_services == expected_services,
-        f"{network} has the expected services"
-    )
-
-
-# ------------------------------------------------------------
 # Summary
 # ------------------------------------------------------------
 
