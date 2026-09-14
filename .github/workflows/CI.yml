@@ -66,7 +66,7 @@ jobs:
         run: |
           echo "Waiting for NGINX and App to become healthy..."
           for i in {1..8}; do
-            if curl -s http://localhost:8080/health | grep -q '"status"'; then
+            if curl -s http://localhost:8090/health | grep -q '"status"'; then
               echo "Services are ready!"
               exit 0
             fi
